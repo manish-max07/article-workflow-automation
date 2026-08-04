@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Draftwire | AI Article Generator</title>
-  <meta name="description" content="Draftwire is a newsroom-style AI article generator with a wire-desk interface.">
+  <title>AI Article Generator</title>
+  <meta name="description" content="Generate a complete article from a topic using AI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,16 +14,16 @@
   <main class="desk-shell">
     <section class="assignment-ticket" aria-labelledby="assignmentTitle">
       <div class="brand-mark">
-        <span class="brand-kicker">Draftwire</span>
-        <h1 id="assignmentTitle">Assignment ticket</h1>
-        <p class="brand-subtitle">Wire-desk drafting for fast-turn article prompts.</p>
+        <span class="brand-kicker">AI writing tool</span>
+        <h1 id="assignmentTitle">AI Article Generator</h1>
+        <p class="brand-subtitle">Enter a topic and generate a complete article using AI.</p>
       </div>
 
       <form id="assignmentForm" class="assignment-form" novalidate>
         <div class="field field-topic">
           <label for="topic">Topic</label>
           <input id="topic" name="topic" type="text" placeholder="e.g. AI in healthcare" autocomplete="off" aria-describedby="topicHelp topicCounter">
-          <p id="topicHelp" class="field-help">Cmd/Ctrl+Enter files the assignment.</p>
+          <p id="topicHelp" class="field-help">Cmd/Ctrl+Enter to generate.</p>
           <p id="topicCounter" class="field-counter" aria-live="polite">0 words • 0 characters</p>
         </div>
 
@@ -62,13 +62,13 @@
           </div>
         </div>
 
-        <button id="generateBtn" class="primary-action" type="submit">Generate dispatch</button>
+        <button id="generateBtn" class="primary-action" type="submit">Generate Article</button>
       </form>
 
       <section class="recent-wire" aria-labelledby="recentTitle">
         <div class="section-heading">
-          <h2 id="recentTitle">Recent wire traffic</h2>
-          <span class="mono-note">Last 5 assignments</span>
+          <h2 id="recentTitle">Recent topics</h2>
+          <span class="mono-note">Last 5 topics</span>
         </div>
         <ul id="recentList" class="recent-list" aria-label="Recent generated topics"></ul>
       </section>
@@ -77,10 +77,10 @@
     <section class="dispatch-panel" aria-labelledby="dispatchTitle" aria-busy="false">
       <header class="dispatch-header">
         <div>
-          <p class="panel-kicker">Wire output</p>
-          <h2 id="dispatchTitle">Newsroom dispatch</h2>
+          <p class="panel-kicker">Article output</p>
+          <h2 id="dispatchTitle">Generated Article</h2>
         </div>
-        <p class="panel-meta">Printed on cream stock with a torn-wire edge.</p>
+        <p class="panel-meta">Word count and generation time appear below the article title.</p>
       </header>
 
       <div id="statusLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -89,32 +89,33 @@
       <div class="paper-stack">
         <section id="emptyState" class="paper-state empty-state">
           <div class="stamp-graphic" aria-hidden="true">
-            <span>Filed</span>
+            <span>Article preview</span>
           </div>
-          <h3>Awaiting assignment</h3>
-          <p>Enter a topic on the left and dispatch a story to the paper tray.</p>
+          <h3>Your article will appear here</h3>
+          <p>Enter a topic on the left and generate an article to see it appear on the right.</p>
         </section>
 
         <section id="loadingState" class="paper-state loading-state" hidden aria-live="polite" aria-atomic="true">
           <div class="teletype">
-            <span class="teletype-prefix">TELEX</span>
-            <span class="teletype-text">Collecting copy from the wire</span>
+            <span class="teletype-text">Generating your article...</span>
             <span class="cursor" aria-hidden="true"></span>
           </div>
         </section>
 
         <section id="errorState" class="paper-state error-state" hidden role="alert" aria-live="assertive" aria-atomic="true">
-          <h3>Dispatch failed</h3>
+          <h3>Something went wrong</h3>
           <p id="errorMessage">Something went wrong.</p>
-          <button id="retryBtn" class="secondary-action" type="button">Retry assignment</button>
+          <button id="retryBtn" class="secondary-action" type="button">Try again</button>
         </section>
 
         <article id="articleState" class="paper-state article-state" hidden>
-          <div id="storyStamp" class="story-stamp" aria-hidden="true">Filed</div>
           <header class="article-header">
-            <div class="article-dateline" id="articleDateline">DATELINE</div>
             <h3 id="articleTopic">Story title</h3>
-            <p class="article-byline">By Draftwire Desk</p>
+            <div class="article-meta" aria-label="Article metadata">
+              <span class="article-meta-item" id="articleWordCount">0 words</span>
+              <span class="article-meta-separator" aria-hidden="true">•</span>
+              <span class="article-meta-item" id="articleGeneratedTime">Generated just now</span>
+            </div>
           </header>
           <div id="articleBody" class="article-body"></div>
           <div id="articleActions" class="article-actions" hidden>

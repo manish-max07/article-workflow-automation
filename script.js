@@ -19,9 +19,9 @@ const errorState = document.getElementById("errorState");
 const errorMessage = document.getElementById("errorMessage");
 const retryBtn = document.getElementById("retryBtn");
 const articleState = document.getElementById("articleState");
-const storyStamp = document.getElementById("storyStamp");
-const articleDateline = document.getElementById("articleDateline");
 const articleTopic = document.getElementById("articleTopic");
+const articleWordCount = document.getElementById("articleWordCount");
+const articleGeneratedTime = document.getElementById("articleGeneratedTime");
 const articleBody = document.getElementById("articleBody");
 const articleActions = document.getElementById("articleActions");
 const copyBtn = document.getElementById("copyBtn");
@@ -104,7 +104,7 @@ function renderRecentTopics() {
   if (!recentTopics.length) {
     const emptyItem = document.createElement("li");
     emptyItem.className = "mono-note";
-    emptyItem.textContent = "No wire traffic yet.";
+    emptyItem.textContent = "No recent topics yet.";
     recentList.appendChild(emptyItem);
     return;
   }
@@ -115,7 +115,7 @@ function renderRecentTopics() {
     button.type = "button";
     button.className = "recent-item";
     button.dataset.topic = topic;
-    button.innerHTML = `<span class="recent-topic">${escapeHtml(topic)}</span><span class="recent-tag">Refill</span>`;
+    button.innerHTML = `<span class="recent-topic">${escapeHtml(topic)}</span><span class="recent-tag">Reuse</span>`;
     button.addEventListener("click", () => {
       topicInput.value = topic;
       updateTopicCounter();
@@ -146,7 +146,6 @@ function updateActionButtons(hasArticle) {
 
 function formatDateline() {
   return new Intl.DateTimeFormat(undefined, {
-    weekday: "short",
     month: "short",
     day: "numeric",
     year: "numeric"
@@ -158,13 +157,13 @@ function showEmptyState() {
   currentArticle = "";
   updateActionButtons(false);
   setPanelState("empty");
-  announceStatus("Awaiting assignment.");
+  announceStatus("Your article will appear here.");
 }
 
 function showLoadingState(topic) {
   clearRevealTimers();
   setPanelState("loading");
-  announceStatus(`Generating article for ${topic}.`);
+  announceStatus(`Generating your article for ${topic}.`);
 }
 
 function showErrorState(message) {
@@ -179,26 +178,21 @@ function showArticleState(topic, article) {
   currentTopic = topic;
   currentArticle = article;
   articleTopic.textContent = topic;
-  articleDateline.textContent = formatDateline();
+  articleWordCount.textContent = `${article.replace(/\s+/g, " ").trim().split(" ").filter(Boolean).length} words`;
+  articleGeneratedTime.textContent = `Generated just now`;
   articleBody.innerHTML = markdownToHtml(article);
   updateActionButtons(true);
   setPanelState("article");
 
-  storyStamp.classList.remove("is-active");
   articleState.classList.remove("is-visible");
   void articleState.offsetWidth;
-  storyStamp.classList.add("is-active");
 
   revealTimers.push(window.setTimeout(() => {
     articleState.hidden = false;
     articleState.classList.add("is-visible");
   }, 160));
 
-  revealTimers.push(window.setTimeout(() => {
-    storyStamp.classList.remove("is-active");
-  }, 420));
-
-  announceStatus(`Article ready for ${topic}.`);
+  announceStatus(`Your article is ready for ${topic}.`);
 }
 
 async function copyArticle() {
@@ -222,7 +216,7 @@ function downloadArticle() {
 
   const fileName = `${slug}.txt`;
   const blob = new Blob([
-    `${currentTopic}\n${formatDateline()}\n\n${currentArticle}`
+    `${currentTopic}\nGenerated just now\n\n${currentArticle}`
   ], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
@@ -243,7 +237,7 @@ async function generateArticle() {
     return;
   }
 
-  console.log("Draftwire options", {
+  console.log("Article Generator options", {
     length: lengthSelect.value,
     tone: toneSelect.value,
     audience: audienceSelect.value,

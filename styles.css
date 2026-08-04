@@ -97,8 +97,7 @@ button:disabled {
 .field-counter,
 .recent-list,
 .dispatch-header,
-.article-dateline,
-.article-byline,
+.article-meta,
 .teletype-prefix {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
 }
@@ -402,19 +401,22 @@ button:disabled {
 }
 
 .stamp-graphic {
-  width: 132px;
-  height: 132px;
-  border-radius: 50%;
-  border: 4px solid rgba(201, 161, 90, 0.7);
+  min-width: 180px;
+  min-height: 88px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  border: 1px solid rgba(201, 161, 90, 0.28);
+  background: rgba(255, 255, 255, 0.12);
   color: var(--brass);
   display: grid;
   place-items: center;
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.88rem;
-  box-shadow: inset 0 0 0 6px rgba(201, 161, 90, 0.08);
-  transform: rotate(-10deg);
+  text-transform: none;
+  letter-spacing: 0.08em;
+  font-size: 0.92rem;
+  box-shadow: none;
+  transform: none;
+  text-align: center;
 }
 
 .stamp-graphic span {
@@ -502,16 +504,9 @@ button:disabled {
 }
 
 .article-header {
-  padding-right: 96px;
+  padding-right: 0;
   display: grid;
   gap: 8px;
-}
-
-.article-dateline {
-  color: rgba(35, 32, 27, 0.56);
-  font-size: 0.8rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
 }
 
 .article-header h3 {
@@ -520,11 +515,23 @@ button:disabled {
   letter-spacing: -0.04em;
 }
 
-.article-byline {
-  color: rgba(35, 32, 27, 0.68);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+.article-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: rgba(35, 32, 27, 0.66);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.article-meta-item {
+  color: rgba(35, 32, 27, 0.72);
+}
+
+.article-meta-separator {
+  color: rgba(35, 32, 27, 0.36);
 }
 
 .article-body {
