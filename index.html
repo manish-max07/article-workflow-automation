@@ -1,68 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>AI Article Generator</title>
-<style>
-  body { font-family: Arial, sans-serif; max-width: 700px; margin: 60px auto; padding: 0 20px; color: #222; }
-  h1 { font-size: 24px; margin-bottom: 4px; }
-  p.sub { color: #666; margin-top: 0; }
-  .row { display: flex; gap: 10px; margin: 20px 0; }
-  input { flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
-  button { padding: 12px 22px; font-size: 16px; border: none; border-radius: 6px; background: #2563eb; color: white; cursor: pointer; }
-  button:disabled { background: #9ca3af; cursor: not-allowed; }
-  #output { white-space: pre-wrap; line-height: 1.6; background: #f9fafb; padding: 20px; border-radius: 8px; min-height: 60px; border: 1px solid #eee; }
-  .loading { color: #666; font-style: italic; }
-  .error { color: #b91c1c; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draftwire | AI Article Generator</title>
+  <meta name="description" content="Draftwire is a newsroom-style AI article generator with a wire-desk interface.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>AI Article Generator</h1>
-  <p class="sub">Enter a topic and get a 500-word AI-written article.</p>
+  <main class="desk-shell">
+    <section class="assignment-ticket" aria-labelledby="assignmentTitle">
+      <div class="brand-mark">
+        <span class="brand-kicker">Draftwire</span>
+        <h1 id="assignmentTitle">Assignment ticket</h1>
+        <p class="brand-subtitle">Wire-desk drafting for fast-turn article prompts.</p>
+      </div>
 
-  <div class="row">
-    <input id="topic" placeholder="e.g. AI in Healthcare" />
-    <button id="btn" onclick="generate()">Generate</button>
-  </div>
+      <form id="assignmentForm" class="assignment-form" novalidate>
+        <div class="field field-topic">
+          <label for="topic">Topic</label>
+          <input id="topic" name="topic" type="text" placeholder="e.g. AI in healthcare" autocomplete="off" aria-describedby="topicHelp topicCounter">
+          <p id="topicHelp" class="field-help">Cmd/Ctrl+Enter files the assignment.</p>
+          <p id="topicCounter" class="field-counter" aria-live="polite">0 words • 0 characters</p>
+        </div>
 
-  <div id="output"></div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="length">Length</label>
+            <select id="length" name="length" aria-label="Article length">
+              <option>Short</option>
+              <option selected>Standard</option>
+              <option>Long</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tone">Tone</label>
+            <select id="tone" name="tone" aria-label="Article tone">
+              <option>Neutral</option>
+              <option>Analytical</option>
+              <option selected>Confident</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="audience">Audience</label>
+            <select id="audience" name="audience" aria-label="Target audience">
+              <option>General</option>
+              <option selected>Professionals</option>
+              <option>Executives</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="language">Language</label>
+            <select id="language" name="language" aria-label="Output language">
+              <option selected>English</option>
+              <option>Spanish</option>
+              <option>French</option>
+            </select>
+          </div>
+        </div>
 
-<script>
-// Your n8n production webhook URL
-const WEBHOOK_URL = "https://manishmax.app.n8n.cloud/webhook/generate-article";
+        <button id="generateBtn" class="primary-action" type="submit">Generate dispatch</button>
+      </form>
 
-async function generate() {
-  const topic = document.getElementById("topic").value.trim();
-  const output = document.getElementById("output");
-  const btn = document.getElementById("btn");
+      <section class="recent-wire" aria-labelledby="recentTitle">
+        <div class="section-heading">
+          <h2 id="recentTitle">Recent wire traffic</h2>
+          <span class="mono-note">Last 5 assignments</span>
+        </div>
+        <ul id="recentList" class="recent-list" aria-label="Recent generated topics"></ul>
+      </section>
+    </section>
 
-  if (!topic) {
-    output.innerHTML = '<span class="error">Please enter a topic.</span>';
-    return;
-  }
+    <section class="dispatch-panel" aria-labelledby="dispatchTitle" aria-busy="false">
+      <header class="dispatch-header">
+        <div>
+          <p class="panel-kicker">Wire output</p>
+          <h2 id="dispatchTitle">Newsroom dispatch</h2>
+        </div>
+        <p class="panel-meta">Printed on cream stock with a torn-wire edge.</p>
+      </header>
 
-  btn.disabled = true;
-  output.innerHTML = '<span class="loading">Generating your article…</span>';
+      <div id="statusLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div id="errorLive" class="sr-only" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
-  try {
-    const res = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic })
-    });
+      <div class="paper-stack">
+        <section id="emptyState" class="paper-state empty-state">
+          <div class="stamp-graphic" aria-hidden="true">
+            <span>Filed</span>
+          </div>
+          <h3>Awaiting assignment</h3>
+          <p>Enter a topic on the left and dispatch a story to the paper tray.</p>
+        </section>
 
-    if (!res.ok) {
-      throw new Error("Request failed with status " + res.status);
-    }
+        <section id="loadingState" class="paper-state loading-state" hidden aria-live="polite" aria-atomic="true">
+          <div class="teletype">
+            <span class="teletype-prefix">TELEX</span>
+            <span class="teletype-text">Collecting copy from the wire</span>
+            <span class="cursor" aria-hidden="true"></span>
+          </div>
+        </section>
 
-    const data = await res.json();
-    output.innerText = data.article || "No article returned.";
-  } catch (err) {
-    output.innerHTML = '<span class="error">Something went wrong: ' + err.message + '</span>';
-  } finally {
-    btn.disabled = false;
-  }
-}
-</script>
+        <section id="errorState" class="paper-state error-state" hidden role="alert" aria-live="assertive" aria-atomic="true">
+          <h3>Dispatch failed</h3>
+          <p id="errorMessage">Something went wrong.</p>
+          <button id="retryBtn" class="secondary-action" type="button">Retry assignment</button>
+        </section>
+
+        <article id="articleState" class="paper-state article-state" hidden>
+          <div id="storyStamp" class="story-stamp" aria-hidden="true">Filed</div>
+          <header class="article-header">
+            <div class="article-dateline" id="articleDateline">DATELINE</div>
+            <h3 id="articleTopic">Story title</h3>
+            <p class="article-byline">By Draftwire Desk</p>
+          </header>
+          <div id="articleBody" class="article-body"></div>
+          <div id="articleActions" class="article-actions" hidden>
+            <button id="copyBtn" class="secondary-action" type="button" disabled>Copy</button>
+            <button id="downloadBtn" class="secondary-action" type="button" disabled>Download .txt</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
