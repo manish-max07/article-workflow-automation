@@ -261,18 +261,18 @@ async function generateArticle() {
   clearTopicError();
 
   const submittedValues = {
-    wordCount: wordCountSelect.value || DEFAULT_FORM_VALUES.wordCount,
-    tone: toneSelect.value,
-    audience: audienceSelect.value,
-    language: languageSelect.value
+    wordCount: wordCountSelect.value.trim() || DEFAULT_FORM_VALUES.wordCount,
+    tone: toneSelect.value.trim() || DEFAULT_FORM_VALUES.tone,
+    audience: audienceSelect.value.trim() || DEFAULT_FORM_VALUES.audience,
+    language: languageSelect.value.trim() || DEFAULT_FORM_VALUES.language
   };
 
   const payload = {
     topic,
-    wordCount: submittedValues.wordCount || DEFAULT_FORM_VALUES.wordCount,
-    tone: submittedValues.tone || DEFAULT_FORM_VALUES.tone,
-    audience: submittedValues.audience || DEFAULT_FORM_VALUES.audience,
-    language: submittedValues.language || DEFAULT_FORM_VALUES.language
+    wordCount: submittedValues.wordCount,
+    tone: submittedValues.tone,
+    audience: submittedValues.audience,
+    language: submittedValues.language
   };
 
   console.log("Article Generator options", payload);
