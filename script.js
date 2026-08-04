@@ -3,7 +3,8 @@ const WEBHOOK_URL = "https://manishmax.app.n8n.cloud/webhook/generate-article";
 
 const form = document.getElementById("assignmentForm");
 const topicInput = document.getElementById("topic");
-const lengthSelect = document.getElementById("length");
+const topicError = document.getElementById("topicError");
+const wordCountSelect = document.getElementById("wordCount");
 const toneSelect = document.getElementById("tone");
 const audienceSelect = document.getElementById("audience");
 const languageSelect = document.getElementById("language");
@@ -31,6 +32,13 @@ const recentTopics = [];
 let currentArticle = "";
 let currentTopic = "";
 let revealTimers = [];
+
+const DEFAULT_FORM_VALUES = {
+  wordCount: "500",
+  tone: "professional",
+  audience: "general",
+  language: "english"
+};
 
 function escapeHtml(value) {
   return value
@@ -74,6 +82,18 @@ function updateTopicCounter() {
   const words = raw ? raw.split(/\s+/).filter(Boolean).length : 0;
   const characters = raw.length;
   topicCounter.textContent = `${words} words • ${characters} characters`;
+}
+
+function clearTopicError() {
+  topicError.textContent = "";
+  topicError.hidden = true;
+  topicInput.removeAttribute("aria-invalid");
+}
+
+function showTopicError(message) {
+  topicError.textContent = message;
+  topicError.hidden = false;
+  topicInput.setAttribute("aria-invalid", "true");
 }
 
 function setPanelState(state) {
@@ -233,18 +253,29 @@ async function generateArticle() {
   const topic = topicInput.value.trim();
 
   if (!topic) {
-    showErrorState("Please enter a topic.");
+    showTopicError("Topic is required.");
+    topicInput.focus();
     return;
   }
 
-  console.log("Article Generator options", {
-    length: lengthSelect.value,
+  clearTopicError();
+
+  const submittedValues = {
+    wordCount: wordCountSelect.value || DEFAULT_FORM_VALUES.wordCount,
     tone: toneSelect.value,
     audience: audienceSelect.value,
     language: languageSelect.value
-  });
+  };
 
-  // TODO: add the dropdown values to the fetch body once the backend workflow is ready.
+  const payload = {
+    topic,
+    wordCount: submittedValues.wordCount || DEFAULT_FORM_VALUES.wordCount,
+    tone: submittedValues.tone || DEFAULT_FORM_VALUES.tone,
+    audience: submittedValues.audience || DEFAULT_FORM_VALUES.audience,
+    language: submittedValues.language || DEFAULT_FORM_VALUES.language
+  };
+
+  console.log("Article Generator options", payload);
 
   generateBtn.disabled = true;
   showLoadingState(topic);
@@ -253,7 +284,7 @@ async function generateArticle() {
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic })
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) {
@@ -277,6 +308,7 @@ form.addEventListener("submit", (event) => {
 });
 
 topicInput.addEventListener("input", updateTopicCounter);
+topicInput.addEventListener("input", clearTopicError);
 
 topicInput.addEventListener("keydown", (event) => {
   if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {

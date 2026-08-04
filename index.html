@@ -25,12 +25,13 @@
           <input id="topic" name="topic" type="text" placeholder="e.g. AI in healthcare" autocomplete="off" aria-describedby="topicHelp topicCounter">
           <p id="topicHelp" class="field-help">Cmd/Ctrl+Enter to generate.</p>
           <p id="topicCounter" class="field-counter" aria-live="polite">0 words • 0 characters</p>
+          <p id="topicError" class="field-error" role="alert" aria-live="polite" hidden></p>
         </div>
 
         <div class="field-grid">
           <div class="field">
-            <label for="length">Length</label>
-            <select id="length" name="length" aria-label="Article length">
+            <label for="wordCount">Length</label>
+            <select id="wordCount" name="wordCount" aria-label="Article length">
               <option>Short</option>
               <option selected>Standard</option>
               <option>Long</option>
