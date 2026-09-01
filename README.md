@@ -1,6 +1,6 @@
 # AI Article Generator
 
-A lightweight front-end app for generating full articles from a topic using an n8n webhook.
+A lightweight front-end app for generating full articles from a topic using an n8n webhook.(This was given as task for Agentic AI Engineer Role)
 
 ## Features
 
